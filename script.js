@@ -2,12 +2,16 @@
 const WORKER_URL = "https://metoffice-data.harrytallon20.workers.dev/forecast";
 
 const locations = [
-  { name: "Town Centre", lat: 51.500, lon: -0.120 },
-  { name: "North Route", lat: 51.540, lon: -0.100 },
-  { name: "South Route", lat: 51.460, lon: -0.110 },
-  { name: "East Route",  lat: 51.500, lon: -0.060 },
-  { name: "West Route",  lat: 51.500, lon: -0.180 },
-  { name: "Outskirts",  lat: 51.580, lon: -0.150 }
+  { name: "Halifax", lat: 53.7399634, lon: -1.9570294 },
+  { name: "Huddersfield", lat: 53.6521033, lon: -1.8289855 },
+  { name: "Leeds", lat: 53.8060755, lon: -1.618304 },
+  { name: "Todmorden",  lat: 53.7099469, lon: -2.1427529 },
+  { name: "Holmfirth",  lat: 53.5669602, lon: -1.8155426 },
+  { name: "Manchester",  lat: 53.4723192, lon: -2.3060345 },
+  { name: "Wakefield",  lat: 53.6758229, lon: -1.5515158 },
+  { name: "Sheffield",  lat: 53.3958074, lon: -1.6646045 },
+  { name: "Keighley",  lat: 53.8641715, lon: -1.9546552 },
+
 ];
 
 // ==== FUNCTIONS ====
@@ -26,20 +30,27 @@ function parseForecast(data) {
     temp: now.screenTemperature,
     rain: now.probOfPrecipitation,
     wind: now.windSpeed10m,
-    weather: now.weatherType
+    weather: now.weatherType,            // General weather type
+    precip: now.precipitationType || "None" // Precipitation type
   };
 
-  // Next 24 hours, every 4 hours
+  // Next 24 hours, every 4 hours (6 entries)
   const forecast = series
-    .filter((_, i) => i % 4 === 0)
-    .slice(0, 6)
+    .filter((_, i) => i % 2 === 0)
+    .slice(0, 7)
     .map(f => ({
       time: new Date(f.time).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}),
       temp: f.screenTemperature,
       rain: f.probOfPrecipitation,
       wind: f.windSpeed10m,
-      weather: f.weatherType
+      weather: f.weatherType,
+      precip: f.precipitationType || "None"
     }));
+
+    // After parsing your forecast data
+document.getElementById("last-updated").textContent = 
+    new Date(data.features[0].properties.timeSeries[0].time).toLocaleString();
+
 
   return { current, forecast };
 }
@@ -49,12 +60,18 @@ function renderLocation(name, data) {
   container.className = "location";
 
   const forecastItems = data.forecast.map(f => `
-    <li>${f.time} — 🌡 ${f.temp}°C | 🌧 ${f.rain}% | 🌬 ${f.wind} m/s | ${f.weather}</li>
+    <li>
+      ${f.time} — 🌡 ${f.temp}°C | 🌧 ${f.rain}% | 🌬 ${f.wind} m/s | 
+      ${f.weather} | Precip: ${f.precip}
+    </li>
   `).join("");
 
   container.innerHTML = `
     <h2>${name}</h2>
-    <p><strong>Now:</strong> 🌡 ${data.current.temp}°C | 🌧 ${data.current.rain}% | 🌬 ${data.current.wind} m/s | ${data.current.weather}</p>
+    <p>
+      <strong>Now:</strong> 🌡 ${data.current.temp}°C | 🌧 ${data.current.rain}% | 
+      🌬 ${data.current.wind} m/s | ${data.current.weather} | Precip: ${data.current.precip}
+    </p>
     <ul class="forecast-list">${forecastItems}</ul>
   `;
 
