@@ -1,15 +1,62 @@
 body {
   font-family: Arial, sans-serif;
   margin: 20px;
+  background: #f5f5f5;
+  font-size: 18px; /* Base font larger for 1080p display */
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 3rem; /* Bigger main title */
+}
+
+/* Grid layout: 2 rows x 3 columns */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  grid-template-rows: repeat(2, auto);   /* 2 rows */
+  gap: 20px;
 }
 
 .location {
-  border: 1px solid #ccc;
-  padding: 12px;
-  margin-bottom: 15px;
-  border-radius: 6px;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
 }
 
-h2 {
+.location h2 {
   margin-top: 0;
+  font-size: 1.5rem; /* Bigger location title */
+}
+
+.location p {
+  font-size: 1.2rem; /* Bigger current conditions */
+  margin: 8px 0;
+}
+
+/* Forecast list styling */
+.forecast-list {
+  list-style: none;
+  padding-left: 0;
+  font-size: 1rem; /* Larger for readability */
+}
+
+.forecast-list li {
+  margin: 4px 0;
+}
+
+/* Responsive: if screen is narrow, adjust columns */
+@media (max-width: 1400px) {
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
 }
